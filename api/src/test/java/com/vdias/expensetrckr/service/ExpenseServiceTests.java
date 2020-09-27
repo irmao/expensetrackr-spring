@@ -1,6 +1,6 @@
 package com.vdias.expensetrckr.service;
 
-import com.vdias.expensetrckr.api.dto.ExpenseCreateRequest;
+import com.vdias.expensetrckr.api.dto.ExpenseRequest;
 import com.vdias.expensetrckr.model.Expense;
 import com.vdias.expensetrckr.model.ExpenseType;
 import com.vdias.expensetrckr.repository.ExpenseRepository;
@@ -10,13 +10,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-import static com.vdias.expensetrckr.test.util.ExpenseTestUtils.buildExpenseCreateRequest;
+import static com.vdias.expensetrckr.test.util.ExpenseTestUtils.buildExpenseRequest;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,7 +35,7 @@ public class ExpenseServiceTests {
     private ExpenseService expenseService;
 
     @Test
-    public void findAllWithSuccess() {
+    public void findAll_allValid_success() {
         // mock data
         List<Expense> expenses = asList(new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00),
                 new Expense(2, LocalDateTime.now(), ExpenseType.BILL, "water", 90.00),
@@ -47,9 +51,31 @@ public class ExpenseServiceTests {
     }
 
     @Test
-    public void createExpenseWithSuccess() {
+    public void findById_allValid_success() {
         // mock data
-        ExpenseCreateRequest request = buildExpenseCreateRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        Expense expense = new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        when(expenseRepository.findById(anyLong())).thenReturn(Optional.of(expense));
+
+        // test
+        Expense returnedExpense = expenseService.findById(1L);
+
+        // assert
+        assertThat(returnedExpense).isNotNull();
+    }
+
+    @Test
+    public void findById_invalidId_throwNotFoundException() {
+        // mock data
+        when(expenseRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // test and verify
+        assertThrows(EntityNotFoundException.class, () -> expenseService.findById(1L));
+    }
+
+    @Test
+    public void createExpense_allValid_success() {
+        // mock data
+        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         when(expenseRepository.save(any(Expense.class)))
                 .thenReturn(new Expense(1L, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue()));
 

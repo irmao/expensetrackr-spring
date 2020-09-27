@@ -2,21 +2,33 @@ package com.vdias.expensetrckr.api.dto;
 
 import com.vdias.expensetrckr.model.ExpenseType;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * Represents the request for creating new {@link com.vdias.expensetrckr.model.Expense} instances via API controller.
+ * Represents the request for creating or updating {@link com.vdias.expensetrckr.model.Expense} instances via API controller.
  */
-public class ExpenseCreateRequest {
+public class ExpenseRequest {
+    private static final String MIN_EXPENSE_VALUE = "0.01";
+
+    @NotNull
     private LocalDateTime date;
+
+    @NotNull
     private ExpenseType expenseType;
+
+    @NotBlank
     private String description;
+
+    @DecimalMin(value = MIN_EXPENSE_VALUE)
     private double value;
 
     /**
      * Default constructor.
      */
-    public ExpenseCreateRequest() {
+    public ExpenseRequest() {
     }
 
     public LocalDateTime getDate() {

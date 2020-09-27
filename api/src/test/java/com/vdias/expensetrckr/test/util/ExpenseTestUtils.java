@@ -1,6 +1,6 @@
 package com.vdias.expensetrckr.test.util;
 
-import com.vdias.expensetrckr.api.dto.ExpenseCreateRequest;
+import com.vdias.expensetrckr.api.dto.ExpenseRequest;
 import com.vdias.expensetrckr.model.ExpenseType;
 
 import java.time.LocalDateTime;
@@ -12,9 +12,9 @@ public class ExpenseTestUtils {
     private ExpenseTestUtils() {
     }
 
-    public static ExpenseCreateRequest buildExpenseCreateRequest(final LocalDateTime date, final ExpenseType expenseType,
-                                                                 final String description, final double value) {
-        ExpenseCreateRequest request = new ExpenseCreateRequest();
+    public static ExpenseRequest buildExpenseRequest(final LocalDateTime date, final ExpenseType expenseType,
+                                                     final String description, final double value) {
+        ExpenseRequest request = new ExpenseRequest();
 
         request.setDate(date);
         request.setExpenseType(expenseType);

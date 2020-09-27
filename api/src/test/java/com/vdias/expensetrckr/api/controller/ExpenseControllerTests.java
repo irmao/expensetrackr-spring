@@ -1,6 +1,7 @@
 package com.vdias.expensetrckr.api.controller;
 
-import com.vdias.expensetrckr.api.dto.ExpenseCreateRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vdias.expensetrckr.api.dto.ExpenseRequest;
 import com.vdias.expensetrckr.model.Expense;
 import com.vdias.expensetrckr.model.ExpenseType;
 import com.vdias.expensetrckr.service.ExpenseService;
@@ -14,18 +15,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+import static com.vdias.expensetrckr.test.util.ExpenseTestUtils.buildExpenseRequest;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.hasValue;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,11 +34,14 @@ public class ExpenseControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockBean
     private ExpenseService expenseService;
 
     @Test
-    public void getExpenses() throws Exception {
+    public void getExpenses_allValid_success() throws Exception {
         // mock data
         Expense mockExpense = new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
 
@@ -59,14 +60,14 @@ public class ExpenseControllerTests {
     }
 
     @Test
-    public void createExpenseWithSuccess() throws Exception {
+    public void getExpenseById_allValid_success() throws Exception {
         // mock data
         Expense mockExpense = new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
 
-        when(expenseService.createExpense(any(ExpenseCreateRequest.class))).thenReturn(mockExpense);
+        when(expenseService.findById(anyLong())).thenReturn(mockExpense);
 
         // test and assert
-        mockMvc.perform(post("/expenses").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/expenses/1").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.id").value(mockExpense.getId()))
@@ -74,5 +75,24 @@ public class ExpenseControllerTests {
                 .andExpect(jsonPath("$.description").value(mockExpense.getDescription()))
                 .andExpect(jsonPath("$.expenseType").value(mockExpense.getExpenseType().toString()))
                 .andExpect(jsonPath("$.value").value(mockExpense.getValue()));
+    }
+
+    @Test
+    public void createExpense_allValid_success() throws Exception {
+        // mock data
+        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
+
+        when(expenseService.createExpense(any(ExpenseRequest.class))).thenReturn(mockExpense);
+
+        // test and assert
+        mockMvc.perform(
+                post("/expenses")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(jsonPath("$").value("/expenses/" + mockExpense.getId()));
     }
 }

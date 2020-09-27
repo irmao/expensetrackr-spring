@@ -1,15 +1,22 @@
 package com.vdias.expensetrckr.api.controller;
 
-import com.sun.istack.NotNull;
-import com.vdias.expensetrckr.api.dto.ExpenseCreateRequest;
+import com.vdias.expensetrckr.api.dto.ExpenseRequest;
 import com.vdias.expensetrckr.api.dto.ExpenseResponse;
+import com.vdias.expensetrckr.model.Expense;
 import com.vdias.expensetrckr.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -18,8 +25,14 @@ import static java.util.stream.Collectors.toList;
  * API Controller class that expose endpoints related to the {@link com.vdias.expensetrckr.model.Expense} model.
  */
 @RestController
-@RequestMapping("/expenses")
+@Validated
+@RequestMapping(ExpenseController.API_ENDPOINT)
 public class ExpenseController {
+
+    /**
+     * The REST API endpoint related to this controller.
+     */
+    public static final String API_ENDPOINT = "/expenses";
 
     /**
      * Instance of {@link ExpenseService} class.
@@ -33,8 +46,22 @@ public class ExpenseController {
      * @return a list with all expenses
      */
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<ExpenseResponse> getExpenses() {
         return expenseService.findExpenses().stream().map(ExpenseResponse::new).collect(toList());
+    }
+
+    /**
+     * Finds an expense by its id.
+     *
+     * @param id id to find
+     * @return the expense
+     * @throws javax.persistence.EntityNotFoundException if the id is not found
+     */
+    @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ExpenseResponse getById(@Valid @NotNull @PathVariable final Long id) {
+        return new ExpenseResponse(expenseService.findById(id));
     }
 
     /**
@@ -44,7 +71,9 @@ public class ExpenseController {
      * @return the newly created expense
      */
     @PostMapping
-    public ExpenseResponse createExpense(@NotNull final ExpenseCreateRequest dto) {
-        return new ExpenseResponse(expenseService.createExpense(dto));
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createExpense(@Valid @NotNull @RequestBody final ExpenseRequest dto) {
+        Expense expense = expenseService.createExpense(dto);
+        return API_ENDPOINT + "/" + expense.getId();
     }
 }

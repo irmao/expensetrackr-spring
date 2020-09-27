@@ -19,11 +19,12 @@ public class ExpenseResponse {
      * Default constructor.
      */
     public ExpenseResponse() {
-    } 
+    }
 
     /**
      * Builds a new instance using the given {@link Expense} data.
-     * @param expense
+     *
+     * @param expense the expense data
      */
     public ExpenseResponse(final Expense expense) {
         this.id = expense.getId();

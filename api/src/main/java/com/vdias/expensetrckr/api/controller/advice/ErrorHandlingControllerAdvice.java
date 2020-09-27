@@ -1,0 +1,58 @@
+package com.vdias.expensetrckr.api.controller.advice;
+
+import com.vdias.expensetrckr.api.dto.ValidationError;
+import com.vdias.expensetrckr.api.dto.ValidationErrorResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import javax.validation.ConstraintViolationException;
+
+/**
+ * Controller Advice to handle exceptions threw by the Controller methods.
+ */
+@ControllerAdvice
+public class ErrorHandlingControllerAdvice {
+    /**
+     * Captures the {@link ConstraintViolationException} threw instances and converts them into a ValidationErrorResponse
+     * object with the list of violations. Returns a BAD REQUEST response with those violations in the body.
+     * The exception is threw by SpringBoot when validations from field annotations are violated.
+     *
+     * @param exception the exception containing information to be converted into an error response
+     * @return the body of the error response, containing the list of errors.
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    ValidationErrorResponse onConstraintViolationException(final ConstraintViolationException exception) {
+        ValidationErrorResponse response = new ValidationErrorResponse();
+
+        exception.getConstraintViolations().forEach(violation ->
+                response.addValidationError(new ValidationError(violation.getPropertyPath().toString(), violation.getMessage())));
+
+        return response;
+    }
+
+    /**
+     * Captures the {@link MethodArgumentNotValidException} threw instances and converts them into a ValidationErrorResponse
+     * object with the list of violations. Returns a BAD REQUEST response with those violations in the body.
+     * The exception is threw by SpringBoot when validations from method parameters are violated.
+     *
+     * @param exception the exception containing information to be converted into an error response
+     * @return the body of the error response, containing the list of errors.
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    ValidationErrorResponse onMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
+        ValidationErrorResponse response = new ValidationErrorResponse();
+
+        exception.getBindingResult().getFieldErrors().forEach(error ->
+                response.addValidationError(new ValidationError(error.getField(), error.getDefaultMessage())));
+
+        return response;
+    }
+}
