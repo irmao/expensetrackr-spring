@@ -75,7 +75,7 @@ public class ExpenseServiceTests {
     @Test
     public void createExpense_allValid_success() {
         // mock data
-        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        ExpenseRequest request = buildExpenseRequest(null, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         when(expenseRepository.save(any(Expense.class)))
                 .thenReturn(new Expense(1L, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue()));
 

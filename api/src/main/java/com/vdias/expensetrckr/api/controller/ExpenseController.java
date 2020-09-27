@@ -2,6 +2,7 @@ package com.vdias.expensetrckr.api.controller;
 
 import com.vdias.expensetrckr.api.dto.ExpenseRequest;
 import com.vdias.expensetrckr.api.dto.ExpenseResponse;
+import com.vdias.expensetrckr.api.validation.OnCreate;
 import com.vdias.expensetrckr.model.Expense;
 import com.vdias.expensetrckr.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,7 @@ public class ExpenseController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Validated(OnCreate.class)
     public String createExpense(@Valid @NotNull @RequestBody final ExpenseRequest dto) {
         Expense expense = expenseService.createExpense(dto);
         return API_ENDPOINT + "/" + expense.getId();

@@ -12,10 +12,11 @@ public class ExpenseTestUtils {
     private ExpenseTestUtils() {
     }
 
-    public static ExpenseRequest buildExpenseRequest(final LocalDateTime date, final ExpenseType expenseType,
+    public static ExpenseRequest buildExpenseRequest(final Long id, final LocalDateTime date, final ExpenseType expenseType,
                                                      final String description, final double value) {
         ExpenseRequest request = new ExpenseRequest();
 
+        request.setId(id);
         request.setDate(date);
         request.setExpenseType(expenseType);
         request.setDescription(description);

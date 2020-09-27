@@ -80,7 +80,7 @@ public class ExpenseControllerTests {
     @Test
     public void createExpense_allValid_success() throws Exception {
         // mock data
-        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        ExpenseRequest request = buildExpenseRequest(null, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
 
         when(expenseService.createExpense(any(ExpenseRequest.class))).thenReturn(mockExpense);
@@ -94,5 +94,37 @@ public class ExpenseControllerTests {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(jsonPath("$").value("/expenses/" + mockExpense.getId()));
+    }
+
+    @Test
+    public void createExpense_invalidFields_badRequest() throws Exception {
+        // mock data
+        ExpenseRequest request = buildExpenseRequest(null, null, null, "", 0.00);
+
+        // test and assert
+        mockMvc.perform(
+                post("/expenses")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.validationErrors", hasSize(4)));
+    }
+
+    @Test
+    public void createExpense_idProvided_badRequest() throws Exception {
+        // mock data
+        ExpenseRequest request = buildExpenseRequest(1L, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+
+        // test and assert
+        mockMvc.perform(
+                post("/expenses")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.validationErrors", hasSize(1)));
     }
 }

@@ -1,10 +1,13 @@
 package com.vdias.expensetrckr.api.dto;
 
+import com.vdias.expensetrckr.api.validation.OnCreate;
+import com.vdias.expensetrckr.api.validation.OnUpdate;
 import com.vdias.expensetrckr.model.ExpenseType;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
 /**
@@ -12,6 +15,10 @@ import java.time.LocalDateTime;
  */
 public class ExpenseRequest {
     private static final String MIN_EXPENSE_VALUE = "0.01";
+
+    @Null(groups = OnCreate.class)
+    @NotNull(groups = OnUpdate.class)
+    private Long id;
 
     @NotNull
     private LocalDateTime date;
@@ -37,6 +44,14 @@ public class ExpenseRequest {
 
     public void setDate(final LocalDateTime pDate) {
         date = pDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long pId) {
+        id = pId;
     }
 
     public ExpenseType getExpenseType() {
