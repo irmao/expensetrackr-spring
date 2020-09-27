@@ -1,5 +1,6 @@
 package com.vdias.expensetrckr.api.controller;
 
+import com.vdias.expensetrckr.api.dto.ExpenseCreateRequest;
 import com.vdias.expensetrckr.model.Expense;
 import com.vdias.expensetrckr.model.ExpenseType;
 import com.vdias.expensetrckr.service.ExpenseService;
@@ -17,10 +18,17 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.hasValue;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
@@ -34,15 +42,37 @@ public class ExpenseControllerTests {
     @Test
     public void getExpenses() throws Exception {
         // mock data
-        List<Expense> expenses = asList(new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00),
-                new Expense(2, LocalDateTime.now(), ExpenseType.BILL, "water", 90.00),
-                new Expense(3, LocalDateTime.now(), ExpenseType.BILL, "internet", 160.00));
+        Expense mockExpense = new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
 
-        when(expenseService.findExpenses()).thenReturn(expenses);
+        when(expenseService.findExpenses()).thenReturn(asList(mockExpense));
 
         // test and assert
         mockMvc.perform(get("/expenses").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andDo(print());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id").value(mockExpense.getId()))
+                .andExpect(jsonPath("$[0].date").isNotEmpty())
+                .andExpect(jsonPath("$[0].description").value(mockExpense.getDescription()))
+                .andExpect(jsonPath("$[0].expenseType").value(mockExpense.getExpenseType().toString()))
+                .andExpect(jsonPath("$[0].value").value(mockExpense.getValue()));
+    }
+
+    @Test
+    public void createExpenseWithSuccess() throws Exception {
+        // mock data
+        Expense mockExpense = new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+
+        when(expenseService.createExpense(any(ExpenseCreateRequest.class))).thenReturn(mockExpense);
+
+        // test and assert
+        mockMvc.perform(post("/expenses").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.id").value(mockExpense.getId()))
+                .andExpect(jsonPath("$.date").isNotEmpty())
+                .andExpect(jsonPath("$.description").value(mockExpense.getDescription()))
+                .andExpect(jsonPath("$.expenseType").value(mockExpense.getExpenseType().toString()))
+                .andExpect(jsonPath("$.value").value(mockExpense.getValue()));
     }
 }
