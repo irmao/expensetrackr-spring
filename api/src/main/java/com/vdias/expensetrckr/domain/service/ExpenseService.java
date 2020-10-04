@@ -56,13 +56,26 @@ public class ExpenseService {
     /**
      * Updates and saves an existing {@link Expense} using the given request data.
      *
+     * @param id       the id of the expense
      * @param pRequest the data to update the expense
      * @return the updated expense
      * @throws EntityNotFoundException if the expense is not found
      */
-    public Expense updateExpense(final ExpenseRequest pRequest) {
-        Expense expense = findById(pRequest.getId());
+    public Expense updateExpense(final Long id, final ExpenseRequest pRequest) {
+        Expense expense = findById(id);
         return expenseRepository.save(assignFields(pRequest, expense));
+    }
+
+
+    /**
+     * Deletes an existing expense.
+     *
+     * @param id the expense id
+     * @throws EntityNotFoundException if the expense is not found
+     */
+    public void deleteExpense(final Long id) {
+        Expense expense = findById(id);
+        expenseRepository.delete(expense);
     }
 
     /**

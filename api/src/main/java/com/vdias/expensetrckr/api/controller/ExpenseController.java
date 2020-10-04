@@ -9,6 +9,7 @@ import com.vdias.expensetrckr.model.Expense;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -91,6 +92,17 @@ public class ExpenseController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Validated(OnUpdate.class)
     public void updateExpense(@Valid @NotNull @PathVariable final Long id, @Valid @NotNull @RequestBody final ExpenseRequest dto) {
-        expenseService.updateExpense(dto);
+        expenseService.updateExpense(id, dto);
+    }
+
+    /**
+     * Deletes an existing expense.
+     *
+     * @param id the id of the expense to be deleted
+     */
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteExpense(@Valid @NotNull @PathVariable final Long id) {
+        expenseService.deleteExpense(id);
     }
 }

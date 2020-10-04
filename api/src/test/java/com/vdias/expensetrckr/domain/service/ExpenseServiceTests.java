@@ -75,7 +75,7 @@ public class ExpenseServiceTests {
     @Test
     public void createExpense_allValid_success() {
         // mock data
-        ExpenseRequest request = buildExpenseRequest(null, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         when(expenseRepository.save(any(Expense.class)))
                 .thenReturn(new Expense(1L, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue()));
 
@@ -94,14 +94,14 @@ public class ExpenseServiceTests {
     @Test
     public void updateExpense_allValid_success() {
         // mock data
-        ExpenseRequest request = buildExpenseRequest(1L, LocalDateTime.now().plusDays(30),
+        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now().plusDays(30),
                 ExpenseType.DRUGSTORE, "medicine", 120.00);
         Expense dbExpense = new Expense(1L, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         when(expenseRepository.findById(anyLong())).thenReturn(Optional.of(dbExpense));
         when(expenseRepository.save(any(Expense.class))).thenReturn(dbExpense);
 
         // test
-        Expense expense = expenseService.updateExpense(request);
+        Expense expense = expenseService.updateExpense(1L, request);
 
         // assert
         assertThat(expense.getDate()).isEqualTo(request.getDate());
@@ -115,9 +115,33 @@ public class ExpenseServiceTests {
     @Test
     public void updateExpense_invalidId_throwNotFoundException() {
         // mock data
+        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now().plusDays(30),
+                ExpenseType.DRUGSTORE, "medicine", 120.00);
         when(expenseRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // test and verify
-        assertThrows(EntityNotFoundException.class, () -> expenseService.findById(1L));
+        assertThrows(EntityNotFoundException.class, () -> expenseService.updateExpense(1L, request));
+    }
+
+    @Test
+    public void deleteExpense_allValid_success() {
+        // mock data
+        Expense dbExpense = new Expense(1L, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        when(expenseRepository.findById(anyLong())).thenReturn(Optional.of(dbExpense));
+
+        // test
+        expenseService.deleteExpense(1L);
+
+        // assert
+        verify(expenseRepository, times(1)).delete(any(Expense.class));
+    }
+
+    @Test
+    public void deleteExpense_invalidId_throwNotFoundException() {
+        // mock data
+        when(expenseRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // test and verify
+        assertThrows(EntityNotFoundException.class, () -> expenseService.deleteExpense(1L));
     }
 }

@@ -23,7 +23,10 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -83,7 +86,7 @@ public class ExpenseControllerTests {
     @Test
     public void createExpense_allValid_success() throws Exception {
         // mock data
-        ExpenseRequest request = buildExpenseRequest(null, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
 
         when(expenseService.createExpense(any(ExpenseRequest.class))).thenReturn(mockExpense);
@@ -102,7 +105,7 @@ public class ExpenseControllerTests {
     @Test
     public void createExpense_invalidFields_badRequest() throws Exception {
         // mock data
-        ExpenseRequest request = buildExpenseRequest(null, null, null, "", 0.00);
+        ExpenseRequest request = buildExpenseRequest(null, null, "", 0.00);
 
         // test and assert
         mockMvc.perform(
@@ -116,28 +119,12 @@ public class ExpenseControllerTests {
     }
 
     @Test
-    public void createExpense_idProvided_badRequest() throws Exception {
-        // mock data
-        ExpenseRequest request = buildExpenseRequest(1L, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
-
-        // test and assert
-        mockMvc.perform(
-                post("/expenses")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("utf-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.validationErrors", hasSize(1)));
-    }
-
-    @Test
     public void updateExpense_allValid_success() throws Exception {
         // mock data
-        ExpenseRequest request = buildExpenseRequest(1L, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
 
-        when(expenseService.updateExpense(any(ExpenseRequest.class))).thenReturn(mockExpense);
+        when(expenseService.updateExpense(anyLong(), any(ExpenseRequest.class))).thenReturn(mockExpense);
 
         // test and assert
         mockMvc.perform(
@@ -151,10 +138,10 @@ public class ExpenseControllerTests {
     @Test
     public void updateExpense_invalidId_notFound() throws Exception {
         // mock data
-        ExpenseRequest request = buildExpenseRequest(1L, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
 
-        when(expenseService.updateExpense(any(ExpenseRequest.class))).thenThrow(new EntityNotFoundException(EXPENSE_NOT_FOUND));
+        when(expenseService.updateExpense(anyLong(), any(ExpenseRequest.class))).thenThrow(new EntityNotFoundException(EXPENSE_NOT_FOUND));
 
         // test and assert
         mockMvc.perform(
@@ -162,6 +149,30 @@ public class ExpenseControllerTests {
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("utf-8"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.message").value(EXPENSE_NOT_FOUND.toString()));
+    }
+
+    @Test
+    public void deleteExpense_allValid_success() throws Exception {
+        // mock
+        doNothing().when(expenseService).deleteExpense(anyLong());
+
+        // test and assert
+        mockMvc.perform(
+                delete("/expenses/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void deleteExpense_invalidId_notFound() throws Exception {
+        // mock data
+        doThrow(new EntityNotFoundException(EXPENSE_NOT_FOUND)).when(expenseService).deleteExpense(anyLong());
+
+        // test and assert
+        mockMvc.perform(
+                delete("/expenses/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.message").value(EXPENSE_NOT_FOUND.toString()));

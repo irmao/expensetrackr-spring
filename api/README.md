@@ -37,7 +37,7 @@ The coded is divided in 3 layers: presentation, business logic and persistence.
     - part of the application that is exposed to collect input and provide results
     - communicates only with the Business Logic Layer
 - Business logic layer:
-    - package: `service`
+    - package: `domain` (`.service`, `.exception`, ...)
     - receives information or requests from the presentation layer, performs business logic
     and uses the persistence layer to store and retrieve data
 - Persistence layer:
