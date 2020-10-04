@@ -3,14 +3,16 @@ package com.vdias.expensetrckr.api.controller;
 import com.vdias.expensetrckr.api.dto.ExpenseRequest;
 import com.vdias.expensetrckr.api.dto.ExpenseResponse;
 import com.vdias.expensetrckr.api.validation.OnCreate;
+import com.vdias.expensetrckr.api.validation.OnUpdate;
+import com.vdias.expensetrckr.domain.service.ExpenseService;
 import com.vdias.expensetrckr.model.Expense;
-import com.vdias.expensetrckr.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -57,7 +59,7 @@ public class ExpenseController {
      *
      * @param id id to find
      * @return the expense
-     * @throws javax.persistence.EntityNotFoundException if the id is not found
+     * @throws com.vdias.expensetrckr.domain.exception.EntityNotFoundException if the id is not found
      */
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -77,5 +79,18 @@ public class ExpenseController {
     public String createExpense(@Valid @NotNull @RequestBody final ExpenseRequest dto) {
         Expense expense = expenseService.createExpense(dto);
         return API_ENDPOINT + "/" + expense.getId();
+    }
+
+    /**
+     * Updates an existing expense with the given dto information.
+     *
+     * @param id  the id of the expense to be updated
+     * @param dto the information to update the expense
+     */
+    @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Validated(OnUpdate.class)
+    public void updateExpense(@Valid @NotNull @PathVariable final Long id, @Valid @NotNull @RequestBody final ExpenseRequest dto) {
+        expenseService.updateExpense(dto);
     }
 }

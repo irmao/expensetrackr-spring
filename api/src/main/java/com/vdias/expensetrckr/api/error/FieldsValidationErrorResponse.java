@@ -1,4 +1,4 @@
-package com.vdias.expensetrckr.api.dto;
+package com.vdias.expensetrckr.api.error;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,16 +6,16 @@ import java.util.List;
 /**
  * Class that represents a response object containing a list of validation errors.
  */
-public class ValidationErrorResponse {
+public class FieldsValidationErrorResponse {
     /**
      * The list of validation errors.
      */
-    private final List<ValidationError> validationErrors;
+    private final List<FieldValidationError> validationErrors;
 
     /**
      * Default constructor.
      */
-    public ValidationErrorResponse() {
+    public FieldsValidationErrorResponse() {
         this.validationErrors = new ArrayList<>();
     }
 
@@ -24,11 +24,17 @@ public class ValidationErrorResponse {
      *
      * @return the list of validation errors
      */
-    public List<ValidationError> getValidationErrors() {
+    public List<FieldValidationError> getValidationErrors() {
         return validationErrors;
     }
 
-    public ValidationErrorResponse addValidationError(final ValidationError error) {
+    /**
+     * Adds a validation error to the response.
+     *
+     * @param error the validation error to be added
+     * @return the response itself
+     */
+    public FieldsValidationErrorResponse addValidationError(final FieldValidationError error) {
         this.validationErrors.add(error);
         return this;
     }

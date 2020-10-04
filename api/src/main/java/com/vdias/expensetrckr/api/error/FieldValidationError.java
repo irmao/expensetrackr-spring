@@ -1,9 +1,9 @@
-package com.vdias.expensetrckr.api.dto;
+package com.vdias.expensetrckr.api.error;
 
 /**
  * Represents a validation error on a field.
  */
-public class ValidationError {
+public class FieldValidationError {
     /**
      * The field name.
      */
@@ -15,20 +15,30 @@ public class ValidationError {
     private final String message;
 
     /**
-     * Builds a new instance of the {@link ValidationError} object with the given information.
+     * Builds a new instance of the {@link FieldValidationError} object with the given information.
      *
      * @param pFieldName the field name
      * @param pMessage   the error message
      */
-    public ValidationError(final String pFieldName, final String pMessage) {
+    public FieldValidationError(final String pFieldName, final String pMessage) {
         this.fieldName = pFieldName;
         this.message = pMessage;
     }
 
+    /**
+     * Returns the field name.
+     *
+     * @return the field name
+     */
     public String getFieldName() {
         return fieldName;
     }
 
+    /**
+     * Returns the validation error message.
+     *
+     * @return the validation error message
+     */
     public String getMessage() {
         return message;
     }

@@ -5,8 +5,14 @@
         "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 
 <suppressions>
-    <suppress checks="Javadoc.*" files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]vdias[\\/]expensetrckr[\\/]api[\\/]dto[\\/].*" />
-    <suppress checks="DesignForExtension" files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]vdias[\\/]expensetrckr[\\/]api[\\/]dto[\\/].*" />
-    <suppress checks="Javadoc.*" files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]vdias[\\/]expensetrckr[\\/]model[\\/].*" />
-    <suppress checks="DesignForExtension" files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]vdias[\\/]expensetrckr[\\/]model[\\/].*" />
+    <suppress checks="Javadoc.*"
+              files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]vdias[\\/]expensetrckr[\\/]domain[\\/]exception[\\/]ApplicationExceptionReason\.java"/>
+    <suppress checks="Javadoc.*"
+              files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]vdias[\\/]expensetrckr[\\/]api[\\/]dto[\\/].*"/>
+    <suppress checks="DesignForExtension"
+              files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]vdias[\\/]expensetrckr[\\/]api[\\/]dto[\\/].*"/>
+    <suppress checks="Javadoc.*"
+              files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]vdias[\\/]expensetrckr[\\/]model[\\/].*"/>
+    <suppress checks="DesignForExtension"
+              files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]vdias[\\/]expensetrckr[\\/]model[\\/].*"/>
 </suppressions>

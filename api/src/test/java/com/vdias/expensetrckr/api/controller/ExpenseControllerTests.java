@@ -2,9 +2,10 @@ package com.vdias.expensetrckr.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vdias.expensetrckr.api.dto.ExpenseRequest;
+import com.vdias.expensetrckr.domain.exception.EntityNotFoundException;
+import com.vdias.expensetrckr.domain.service.ExpenseService;
 import com.vdias.expensetrckr.model.Expense;
 import com.vdias.expensetrckr.model.ExpenseType;
-import com.vdias.expensetrckr.service.ExpenseService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static com.vdias.expensetrckr.domain.exception.ApplicationExceptionReason.EXPENSE_NOT_FOUND;
 import static com.vdias.expensetrckr.test.util.ExpenseTestUtils.buildExpenseRequest;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasSize;
@@ -24,6 +26,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -126,5 +129,41 @@ public class ExpenseControllerTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.validationErrors", hasSize(1)));
+    }
+
+    @Test
+    public void updateExpense_allValid_success() throws Exception {
+        // mock data
+        ExpenseRequest request = buildExpenseRequest(1L, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
+
+        when(expenseService.updateExpense(any(ExpenseRequest.class))).thenReturn(mockExpense);
+
+        // test and assert
+        mockMvc.perform(
+                put("/expenses/1")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void updateExpense_invalidId_notFound() throws Exception {
+        // mock data
+        ExpenseRequest request = buildExpenseRequest(1L, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
+        Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
+
+        when(expenseService.updateExpense(any(ExpenseRequest.class))).thenThrow(new EntityNotFoundException(EXPENSE_NOT_FOUND));
+
+        // test and assert
+        mockMvc.perform(
+                put("/expenses/1")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.message").value(EXPENSE_NOT_FOUND.toString()));
     }
 }

@@ -64,7 +64,8 @@ them into Models, since this is business logic.
 - Never return null. If the returned object can be null, return Optional<> of the object.
 In case of lists, return empty list.
 - Follow the most REST API conventions as possible 
-
+- Apply as most as functional style programming as possible, following good practices
+    - https://dzone.com/articles/functional-programming-patterns-with-java-8
 
 ### REST API
 - Endpoints contain NOUS, and not ACTIONS. The action is implied by the Http Request method;
