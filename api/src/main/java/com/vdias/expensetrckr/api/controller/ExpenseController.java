@@ -6,6 +6,8 @@ import com.vdias.expensetrckr.api.validation.OnCreate;
 import com.vdias.expensetrckr.api.validation.OnUpdate;
 import com.vdias.expensetrckr.domain.service.ExpenseService;
 import com.vdias.expensetrckr.model.Expense;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +33,7 @@ import static java.util.stream.Collectors.toList;
 @RestController
 @Validated
 @RequestMapping(ExpenseController.API_ENDPOINT)
+@Api("Provides operations regarding Expenses")
 public class ExpenseController {
 
     /**
@@ -51,6 +54,7 @@ public class ExpenseController {
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Gets the expenses")
     public List<ExpenseResponse> getExpenses() {
         return expenseService.findExpenses().stream().map(ExpenseResponse::new).collect(toList());
     }
@@ -64,6 +68,7 @@ public class ExpenseController {
      */
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Gets a single expense by its unique id")
     public ExpenseResponse getById(@Valid @NotNull @PathVariable final Long id) {
         return new ExpenseResponse(expenseService.findById(id));
     }
@@ -77,6 +82,7 @@ public class ExpenseController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Validated(OnCreate.class)
+    @ApiOperation("Creates a new expense")
     public String createExpense(@Valid @NotNull @RequestBody final ExpenseRequest dto) {
         Expense expense = expenseService.createExpense(dto);
         return API_ENDPOINT + "/" + expense.getId();
@@ -91,6 +97,7 @@ public class ExpenseController {
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Validated(OnUpdate.class)
+    @ApiOperation("Updates an existing expense")
     public void updateExpense(@Valid @NotNull @PathVariable final Long id, @Valid @NotNull @RequestBody final ExpenseRequest dto) {
         expenseService.updateExpense(id, dto);
     }
@@ -102,6 +109,7 @@ public class ExpenseController {
      */
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Deletes an existing expense")
     public void deleteExpense(@Valid @NotNull @PathVariable final Long id) {
         expenseService.deleteExpense(id);
     }
