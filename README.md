@@ -49,25 +49,30 @@ The code is developed around the Entities in the system. The package `model` con
 Each controller, dto, service and repository provides functions related to a single entity.
 
 ### Code and architecture decisions
-- Follow most of the checkstyle suggestions;
-- Use as most Spring Boot features and annotations as possible;
-- Never expose models: always use DTOs for requests and responses;
-- Do all possible validations by annotations on the requests DTO: that guarantees that only valid data
-goes to the business logic layer;
-- Do not add validations in the persistence layer: that means the business logic performed its operations
-with possibly invalid data;
-- Services always return models (not DTOs), so the methods can be better reused in the business logic layer. When
-exposing the values through the API, the controllers are responsible for converting them to DTOs, since
-this is a requirement for presentation;
-- When adding entities values in the system, the services can receive request dtos and transform
-them into Models, since this is business logic. 
-- Never return null. If the returned object can be null, return Optional<> of the object.
-In case of lists, return empty list.
-- Follow the most REST API conventions as possible 
-- Apply as most as functional style programming as possible, following good practices
-    - https://dzone.com/articles/functional-programming-patterns-with-java-8
-- In `application.properties`, start all custom property with `app.`, so one can know for sure it is not used internally
-by some library
+- Follow most of the checkstyle suggestions
+    - Motivation: they are there for a good reason. But do not trust all of them: always look for their motivation.
+- Use as most Spring Boot features and annotations as possible
+    - Motivation: prevent from doing manual things when they are already automated.
+- Never expose models: always use DTOs for requests and responses
+    - Motivation: expose only necessary. If the model grows, we are able to decide if the new features will be exposed or not. If the model has lists, they are not returned unless necessary.
+- Do all possible validations by annotations on the requests DTO
+    - Motivation: that guarantees that only valid data goes to the business logic layer.
+- Do not add validations in the persistence layer
+    - Motivation: that means the business logic performed its operations with possibly invalid data
+- Services always return models (not DTOs)
+    - Motivation: the methods can be better reused in the business logic layer. Also, when exposing the values through the API, the controllers are responsible for converting them to DTOs because this is a requirement for presentation, so it must be done in the presentation layer.
+- When adding entities values in the system, the services can receive request dtos and transform them into Models
+    - Motivation: since this is business logic (for example receiving related entities ids and fetching the corresponding models; deciding if they can be null or not; etc).
+- Never return null. If the returned object can be null, return Optional<> of the object. In case of lists, return empty list
+    - Motivation: avoid unwanted NullPointerException due to forgetting to check; explicitly inform whether a method return a nullable value or not will facilitate the understanding of the code; allows functional style programming.
+- Follow the most REST API conventions as possible
+    - Motivation: Force to learn REST conventions and guidelines. It is easier to a system to use the public API.
+- Apply as most as functional style programming as possible, following good practices (https://dzone.com/articles/functional-programming-patterns-with-java-8)
+    - Motivation: Force to learn functional style. It is easier to understand the code if it is well written
+- In `application.properties`, start all custom property with `app.`
+    - Motivation: so one can know for sure it is not used internally by some library.
+- When a variable does not change and should not change, declare it as final, even if it is a local variable.
+    - Motivation: prevent logic errors; allows the compiler to optimize the class file
 
 ### REST API
 - Endpoints contain NOUS, and not ACTIONS. The action is implied by the Http Request method;

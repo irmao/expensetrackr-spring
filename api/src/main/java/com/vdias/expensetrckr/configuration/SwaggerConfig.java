@@ -38,7 +38,7 @@ public class SwaggerConfig {
     /**
      * Base package that is displayed by Swagger.
      */
-    @Value("${app.swagger.api.basepackage}")
+    @Value("${app.swagger.api.basePackage}")
     private String basePackage;
 
     /**
@@ -50,7 +50,7 @@ public class SwaggerConfig {
     /**
      * Url of the project license to show in Swagger.
      */
-    @Value("${app.swagger.api.licenseurl}")
+    @Value("${app.swagger.api.licenseUrl}")
     private String licenseUrl;
 
     /**
