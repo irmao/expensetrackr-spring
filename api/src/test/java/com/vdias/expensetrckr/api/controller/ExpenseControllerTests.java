@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
 @WithMockUser
-public class ExpenseControllerTests extends ControllerTestBase {
+class ExpenseControllerTests extends ControllerTestBase {
 
     @MockBean
     private ExpenseService expenseService;

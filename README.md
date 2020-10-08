@@ -6,6 +6,16 @@ The application is a simple expenses controller. The user registers all their ex
 date, expense type) as soon as they occur and the system can provide reports, charts, lists
 and any possibly other types of aggregations that I may think of.
 
+## CI & Code Quality
+The has Continuous Integration powered by Github Actions. After commits are made to the `main` branch, the following tools analyse the code:
+- Checkstyle (https://github.com/checkstyle/checkstyle)
+    - If any issue is found, it breaks the build and Github Actions acuses it
+- JaCoCo (https://www.eclemma.org/jacoco/)
+    - After passing through the previous analysis, maven run the tests and checks the code coverage. If the minimum requirement is not met, the build fails and Github Actions acuses it. The minimum coverage at the moment is 30%.
+- SonarCloud (https://sonarcloud.io/)
+    - After passing through the previous analysis, Sonar verifies the code and publishes the report here:
+        - https://sonarcloud.io/dashboard?id=irmao_expensetrackr-spring
+
 ## Development Type
 ### TDD (Test-Driven-Development)
 
