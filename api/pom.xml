@@ -16,6 +16,11 @@
 
     <properties>
         <java.version>14</java.version>
+
+        <!-- sonarcloud -->
+        <sonar.projectKey>irmao_expensetrackr-spring</sonar.projectKey>
+        <sonar.organization>irmao</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
