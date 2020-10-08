@@ -1,4 +1,4 @@
-package com.vdias.expensetrckr.configuration;
+package com.vdias.expensetrckr.api.configuration;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

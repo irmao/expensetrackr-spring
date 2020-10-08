@@ -1,7 +1,7 @@
 package com.vdias.expensetrckr.domain.service;
 
 import com.vdias.expensetrckr.api.dto.UserCredentials;
-import com.vdias.expensetrckr.configuration.JwtTokenUtil;
+import com.vdias.expensetrckr.api.configuration.JwtTokenUtil;
 import com.vdias.expensetrckr.domain.exception.AuthenticationException;
 import com.vdias.expensetrckr.model.AuthenticatedUser;
 import com.vdias.expensetrckr.model.User;

@@ -1,4 +1,4 @@
-package com.vdias.expensetrckr.configuration;
+package com.vdias.expensetrckr.api.configuration;
 
 import com.vdias.expensetrckr.domain.service.AuthenticationService;
 import io.jsonwebtoken.ExpiredJwtException;
