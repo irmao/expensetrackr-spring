@@ -1,22 +1,16 @@
 package com.vdias.expensetrckr.api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vdias.expensetrckr.api.dto.ExpenseRequest;
-import com.vdias.expensetrckr.configuration.JwtTokenUtil;
 import com.vdias.expensetrckr.domain.exception.EntityNotFoundException;
-import com.vdias.expensetrckr.domain.service.AuthenticationService;
 import com.vdias.expensetrckr.domain.service.ExpenseService;
 import com.vdias.expensetrckr.model.Expense;
 import com.vdias.expensetrckr.model.ExpenseType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
@@ -29,10 +23,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,18 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
 @WithMockUser
-public class ExpenseControllerTests {
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private JwtTokenUtil jwtTokenUtil;
-
-    @MockBean
-    private AuthenticationService authenticationService;
+public class ExpenseControllerTests extends ControllerBaseTest {
 
     @MockBean
     private ExpenseService expenseService;
@@ -64,7 +43,7 @@ public class ExpenseControllerTests {
         when(expenseService.findExpenses()).thenReturn(asList(mockExpense));
 
         // test and assert
-        mockMvc.perform(get("/expenses").contentType(MediaType.APPLICATION_JSON))
+        testGet("/expenses")
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -83,7 +62,7 @@ public class ExpenseControllerTests {
         when(expenseService.findById(anyLong())).thenReturn(mockExpense);
 
         // test and assert
-        mockMvc.perform(get("/expenses/1").contentType(MediaType.APPLICATION_JSON))
+        testGet("/expenses/1")
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.id").value(mockExpense.getId()))
@@ -102,11 +81,7 @@ public class ExpenseControllerTests {
         when(expenseService.createExpense(any(ExpenseRequest.class))).thenReturn(mockExpense);
 
         // test and assert
-        mockMvc.perform(
-                post("/expenses")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("utf-8"))
+        testPost("/expenses", request)
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(jsonPath("$").value("/expenses/" + mockExpense.getId()));
@@ -118,11 +93,7 @@ public class ExpenseControllerTests {
         ExpenseRequest request = buildExpenseRequest(null, null, "", 0.00);
 
         // test and assert
-        mockMvc.perform(
-                post("/expenses")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("utf-8"))
+        testPost("/expenses", request)
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.validationErrors", hasSize(4)));
@@ -137,11 +108,7 @@ public class ExpenseControllerTests {
         when(expenseService.updateExpense(anyLong(), any(ExpenseRequest.class))).thenReturn(mockExpense);
 
         // test and assert
-        mockMvc.perform(
-                put("/expenses/1")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("utf-8"))
+        testPut("/expenses/1", request)
                 .andExpect(status().isNoContent());
     }
 
@@ -154,11 +121,7 @@ public class ExpenseControllerTests {
         when(expenseService.updateExpense(anyLong(), any(ExpenseRequest.class))).thenThrow(new EntityNotFoundException(EXPENSE_NOT_FOUND));
 
         // test and assert
-        mockMvc.perform(
-                put("/expenses/1")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("utf-8"))
+        testPut("/expenses/1", request)
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.message").value(EXPENSE_NOT_FOUND.toString()));
@@ -170,8 +133,7 @@ public class ExpenseControllerTests {
         doNothing().when(expenseService).deleteExpense(anyLong());
 
         // test and assert
-        mockMvc.perform(
-                delete("/expenses/1"))
+        testDelete("/expenses/1")
                 .andExpect(status().isNoContent());
     }
 
@@ -181,8 +143,7 @@ public class ExpenseControllerTests {
         doThrow(new EntityNotFoundException(EXPENSE_NOT_FOUND)).when(expenseService).deleteExpense(anyLong());
 
         // test and assert
-        mockMvc.perform(
-                delete("/expenses/1"))
+        testDelete("/expenses/1")
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.message").value(EXPENSE_NOT_FOUND.toString()));
