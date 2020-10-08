@@ -68,6 +68,12 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
+        <!-- Database migration -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-maven-plugin</artifactId>
+            <version>7.0.0</version>
+        </dependency>
         <!-- Tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS expense (
+    id SERIAL PRIMARY KEY,
+    `date` TIMESTAMP WITH TIME ZONE NOT NULL,
+    expense_type VARCHAR(50) NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    `value` NUMERIC(2) NOT NULL
+);
