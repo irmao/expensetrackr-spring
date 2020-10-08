@@ -88,20 +88,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http
-                // disables csrf
-                .csrf().disable()
-                .authorizeRequests()
+            // disables csrf
+            .csrf().disable()
+            .authorizeRequests()
                 // allows a few endpoints to be authorized without authentication
                 .antMatchers(AUTH_ALLOWED_LIST).permitAll()
                 // all other requests need to be authenticated
                 .anyRequest().authenticated()
                 // responds the status UNAUTHORIZED when an exception has occurred previously in the filter
-                .and().exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            .and().exceptionHandling()
+                    .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 // sets the session as STATELESS, so session won't be used to store the user's state
-                .and().sessionManagement()
+            .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 // adds the JWT filter to validate to token with every request
-                .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+            .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

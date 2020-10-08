@@ -2,7 +2,9 @@ package com.vdias.expensetrckr.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vdias.expensetrckr.api.dto.ExpenseRequest;
+import com.vdias.expensetrckr.configuration.JwtTokenUtil;
 import com.vdias.expensetrckr.domain.exception.EntityNotFoundException;
+import com.vdias.expensetrckr.domain.service.AuthenticationService;
 import com.vdias.expensetrckr.domain.service.ExpenseService;
 import com.vdias.expensetrckr.model.Expense;
 import com.vdias.expensetrckr.model.ExpenseType;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -36,12 +39,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
+@WithMockUser
 public class ExpenseControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private JwtTokenUtil jwtTokenUtil;
+
+    @MockBean
+    private AuthenticationService authenticationService;
 
     @MockBean
     private ExpenseService expenseService;
