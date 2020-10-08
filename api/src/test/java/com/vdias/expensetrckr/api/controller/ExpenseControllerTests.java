@@ -30,13 +30,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
 @WithMockUser
-public class ExpenseControllerTests extends ControllerBaseTest {
+public class ExpenseControllerTests extends ControllerTestBase {
 
     @MockBean
     private ExpenseService expenseService;
 
     @Test
-    public void getExpenses_allValid_success() throws Exception {
+    void getExpenses_allValid_success() throws Exception {
         // mock data
         Expense mockExpense = new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
 
@@ -55,7 +55,7 @@ public class ExpenseControllerTests extends ControllerBaseTest {
     }
 
     @Test
-    public void getExpenseById_allValid_success() throws Exception {
+    void getExpenseById_allValid_success() throws Exception {
         // mock data
         Expense mockExpense = new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
 
@@ -73,7 +73,7 @@ public class ExpenseControllerTests extends ControllerBaseTest {
     }
 
     @Test
-    public void createExpense_allValid_success() throws Exception {
+    void createExpense_allValid_success() throws Exception {
         // mock data
         ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
@@ -88,7 +88,7 @@ public class ExpenseControllerTests extends ControllerBaseTest {
     }
 
     @Test
-    public void createExpense_invalidFields_badRequest() throws Exception {
+    void createExpense_invalidFields_badRequest() throws Exception {
         // mock data
         ExpenseRequest request = buildExpenseRequest(null, null, "", 0.00);
 
@@ -100,7 +100,7 @@ public class ExpenseControllerTests extends ControllerBaseTest {
     }
 
     @Test
-    public void updateExpense_allValid_success() throws Exception {
+    void updateExpense_allValid_success() throws Exception {
         // mock data
         ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
@@ -113,7 +113,7 @@ public class ExpenseControllerTests extends ControllerBaseTest {
     }
 
     @Test
-    public void updateExpense_invalidId_notFound() throws Exception {
+    void updateExpense_invalidId_notFound() throws Exception {
         // mock data
         ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         Expense mockExpense = new Expense(1, request.getDate(), request.getExpenseType(), request.getDescription(), request.getValue());
@@ -128,7 +128,7 @@ public class ExpenseControllerTests extends ControllerBaseTest {
     }
 
     @Test
-    public void deleteExpense_allValid_success() throws Exception {
+    void deleteExpense_allValid_success() throws Exception {
         // mock
         doNothing().when(expenseService).deleteExpense(anyLong());
 
@@ -138,7 +138,7 @@ public class ExpenseControllerTests extends ControllerBaseTest {
     }
 
     @Test
-    public void deleteExpense_invalidId_notFound() throws Exception {
+    void deleteExpense_invalidId_notFound() throws Exception {
         // mock data
         doThrow(new EntityNotFoundException(EXPENSE_NOT_FOUND)).when(expenseService).deleteExpense(anyLong());
 

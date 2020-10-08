@@ -14,7 +14,7 @@ public abstract class ApplicationException extends RuntimeException {
      *
      * @param pReason the reason of the exception.
      */
-    public ApplicationException(final ApplicationExceptionReason pReason) {
+    protected ApplicationException(final ApplicationExceptionReason pReason) {
         this.reason = pReason;
     }
 
@@ -24,7 +24,7 @@ public abstract class ApplicationException extends RuntimeException {
      * @param pReason the reason of the exception.
      * @param cause   throwable cause.
      */
-    public ApplicationException(final ApplicationExceptionReason pReason, final Throwable cause) {
+    protected ApplicationException(final ApplicationExceptionReason pReason, final Throwable cause) {
         super(cause);
         this.reason = pReason;
     }

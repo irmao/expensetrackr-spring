@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 /**
  * Base class for Controller tests.
  */
-public class ControllerBaseTest {
+public class ControllerTestBase {
     @Autowired
     protected MockMvc mockMvc;
 

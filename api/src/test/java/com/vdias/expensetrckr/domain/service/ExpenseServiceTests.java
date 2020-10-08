@@ -35,7 +35,7 @@ public class ExpenseServiceTests {
     private ExpenseService expenseService;
 
     @Test
-    public void findAll_allValid_success() {
+    void findAll_allValid_success() {
         // mock data
         List<Expense> expenses = asList(new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00),
                 new Expense(2, LocalDateTime.now(), ExpenseType.BILL, "water", 90.00),
@@ -51,7 +51,7 @@ public class ExpenseServiceTests {
     }
 
     @Test
-    public void findById_allValid_success() {
+    void findById_allValid_success() {
         // mock data
         Expense expense = new Expense(1, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         when(expenseRepository.findById(anyLong())).thenReturn(Optional.of(expense));
@@ -64,7 +64,7 @@ public class ExpenseServiceTests {
     }
 
     @Test
-    public void findById_invalidId_throwNotFoundException() {
+    void findById_invalidId_throwNotFoundException() {
         // mock data
         when(expenseRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -73,7 +73,7 @@ public class ExpenseServiceTests {
     }
 
     @Test
-    public void createExpense_allValid_success() {
+    void createExpense_allValid_success() {
         // mock data
         ExpenseRequest request = buildExpenseRequest(LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         when(expenseRepository.save(any(Expense.class)))
@@ -92,7 +92,7 @@ public class ExpenseServiceTests {
     }
 
     @Test
-    public void updateExpense_allValid_success() {
+    void updateExpense_allValid_success() {
         // mock data
         ExpenseRequest request = buildExpenseRequest(LocalDateTime.now().plusDays(30),
                 ExpenseType.DRUGSTORE, "medicine", 120.00);
@@ -113,7 +113,7 @@ public class ExpenseServiceTests {
     }
 
     @Test
-    public void updateExpense_invalidId_throwNotFoundException() {
+    void updateExpense_invalidId_throwNotFoundException() {
         // mock data
         ExpenseRequest request = buildExpenseRequest(LocalDateTime.now().plusDays(30),
                 ExpenseType.DRUGSTORE, "medicine", 120.00);
@@ -124,7 +124,7 @@ public class ExpenseServiceTests {
     }
 
     @Test
-    public void deleteExpense_allValid_success() {
+    void deleteExpense_allValid_success() {
         // mock data
         Expense dbExpense = new Expense(1L, LocalDateTime.now(), ExpenseType.BILL, "netflix", 30.00);
         when(expenseRepository.findById(anyLong())).thenReturn(Optional.of(dbExpense));
@@ -137,7 +137,7 @@ public class ExpenseServiceTests {
     }
 
     @Test
-    public void deleteExpense_invalidId_throwNotFoundException() {
+    void deleteExpense_invalidId_throwNotFoundException() {
         // mock data
         when(expenseRepository.findById(anyLong())).thenReturn(Optional.empty());
 

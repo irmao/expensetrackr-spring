@@ -11,10 +11,14 @@ import static com.vdias.expensetrckr.model.UserState.REQUIRES_PASSWORD_CHANGE;
 import static java.util.Arrays.asList;
 
 public class AuthenticatedUser implements UserDetails {
-    private User user;
+    private String username;
+    private String password;
+    private UserState state;
 
-    public AuthenticatedUser(@NotNull final User pUser) {
-        this.user = pUser;
+    public AuthenticatedUser(@NotNull final User user) {
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.state = user.getState();
     }
 
     @Override
@@ -24,31 +28,31 @@ public class AuthenticatedUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return user.getState() != REQUIRES_PASSWORD_CHANGE;
+        return state != REQUIRES_PASSWORD_CHANGE;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.getState() != INACTIVE;
+        return state != INACTIVE;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return user.getState() != REQUIRES_PASSWORD_CHANGE;
+        return state != REQUIRES_PASSWORD_CHANGE;
     }
 
     @Override
     public boolean isEnabled() {
-        return user.getState() != INACTIVE;
+        return state != INACTIVE;
     }
 }

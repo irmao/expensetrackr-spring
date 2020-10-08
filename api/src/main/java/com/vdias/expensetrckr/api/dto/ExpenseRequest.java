@@ -29,6 +29,7 @@ public class ExpenseRequest {
      * Default constructor.
      */
     public ExpenseRequest() {
+        // Empty constructor for serialization.
     }
 
     public LocalDateTime getDate() {

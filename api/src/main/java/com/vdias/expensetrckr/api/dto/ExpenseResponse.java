@@ -19,6 +19,7 @@ public class ExpenseResponse {
      * Default constructor.
      */
     public ExpenseResponse() {
+        // Empty constructor for serialization.
     }
 
     /**

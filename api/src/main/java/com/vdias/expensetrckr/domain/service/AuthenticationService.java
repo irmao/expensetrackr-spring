@@ -1,7 +1,7 @@
 package com.vdias.expensetrckr.domain.service;
 
-import com.vdias.expensetrckr.api.dto.UserCredentials;
 import com.vdias.expensetrckr.api.configuration.JwtTokenUtil;
+import com.vdias.expensetrckr.api.dto.UserCredentials;
 import com.vdias.expensetrckr.domain.exception.AuthenticationException;
 import com.vdias.expensetrckr.model.AuthenticatedUser;
 import com.vdias.expensetrckr.model.User;
@@ -64,7 +64,7 @@ public class AuthenticationService implements UserDetailsService {
      * @param credentials the credentials
      * @throws AuthenticationException if the user couldn't be authenticateds
      */
-    private void authenticate(final UserCredentials credentials) throws AuthenticationException {
+    private void authenticate(final UserCredentials credentials) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
         } catch (DisabledException e) {
@@ -82,7 +82,7 @@ public class AuthenticationService implements UserDetailsService {
      * @throws UsernameNotFoundException if the user was not found in the database
      */
     @Override
-    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(final String username) {
         final User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
         return new AuthenticatedUser(user);
     }
