@@ -62,7 +62,7 @@ public class AuthenticationService implements UserDetailsService {
      * the user couldn't be authenticated.
      *
      * @param credentials the credentials
-     * @throws AuthenticationException if the user couldn't be authenticateds
+     * @throws AuthenticationException if the user couldn't be authenticated
      */
     private void authenticate(final UserCredentials credentials) {
         try {

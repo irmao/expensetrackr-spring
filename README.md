@@ -83,11 +83,13 @@ Each controller, dto, service and repository provides functions related to a sin
     - Motivation: so one can know for sure it is not used internally by some library.
 - When a variable does not change and should not change, declare it as final, even if it is a local variable.
     - Motivation: prevent logic errors; allows the compiler to optimize the class file
+- Authentication endpoint is: `POST /authentication/credentials`
+    - Motivation: `POST`: user is creating their token. `/authentication/credentials`: REST conventions state that we should use nouns along with the HTTP methods, and `/login` is a verb
 
 ### REST API
 - Endpoints contain NOUS, and not ACTIONS. The action is implied by the Http Request method;
-- When possible, mantatory parameters as path variables `(/entities/id)` and optional ones
-as url paramters `(/entities?name=me)`
+- When possible, mandatory parameters as path variables `(/entities/id)` and optional ones
+as url parameters `(/entities?name=me)`
 - Endpoints in plural
 - Common endpoint examples:
     - `GET /expenses`

@@ -1,6 +1,8 @@
 package com.vdias.expensetrckr.model;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,21 +20,19 @@ public class User {
 
     private String password;
 
-    private String name;
-
     private String email;
 
+    @Enumerated(EnumType.STRING)
     private UserState state;
 
     public User() {
         // JPA requires default constructor.
     }
 
-    public User(final long pId, final String pUsername, final String pPassword, final String pName, final String pEmail, final UserState pState) {
+    public User(final long pId, final String pUsername, final String pPassword, final String pEmail, final UserState pState) {
         id = pId;
         username = pUsername;
         password = pPassword;
-        name = pName;
         email = pEmail;
         state = pState;
     }
@@ -59,14 +59,6 @@ public class User {
 
     public void setPassword(final String pPassword) {
         password = pPassword;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String pName) {
-        name = pName;
     }
 
     public String getEmail() {
